@@ -1,0 +1,13 @@
+     9.5: flog total
+     4.8: flog/method average
+
+     8.3: UserObserver#after_save
+     3.6: branch
+     1.3: deliver_forgot_password
+     1.3: deliver_reset_password
+     1.3: deliver_activation
+     1.2: recently_reset_password?
+     1.2: recently_activated?
+     1.2: recently_forgot_password?
+     1.2: UserObserver#after_create
+     1.2: deliver_signup_notification

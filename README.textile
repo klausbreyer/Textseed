@@ -1,0 +1,17 @@
+h1. What is Textseed?
+
+Textseed is a more organic way to write your documents! Let your documents and thoughts grow through other's people's contributions, just as flowers grow when receiving sun and water.
+In the end you won't get what you expected– but more often than not will you get something that is much more likely to be perfect. Because: No one is as smart as all of us!
+
+h1. Why use Textseed?
+
+Because it's fun to use! It's free! And compared to usual version controlled systems you are able to keep track of everything at once.
+Textseed is a service for friends and partners who want to work on one single document for school or business.
+It's also a tool for sharing your thoughts and texts with others. Because everybody can participate it can help getting new inspiration by letting the document grow in an more organic way.
+You can use a set of markup item to style your document. Additionally you can choose whether you want your document to be private or public.
+
+h1. How does it work?
+
+Every user gets a unique color for the whole document. Words are written in the respective user's color. Added and deleted words are emphasized in a special way.
+
+

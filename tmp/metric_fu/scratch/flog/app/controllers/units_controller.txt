@@ -1,0 +1,16 @@
+    13.8: flog total
+    13.8: flog/method average
+
+    13.8: UnitsController#destroy
+     3.7: branch
+     2.3: assignment
+     1.6: units_url
+     1.5: params
+     1.4: redirect_to
+     1.4: head
+     1.3: xml
+     1.3: html
+     1.3: []
+     1.1: find
+     1.1: respond_to
+     1.1: destroy

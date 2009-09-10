@@ -1,0 +1,167 @@
+
+/* Success, notice and error boxes
+-------------------------------------------------------------- */
+
+.error,
+.notice,
+.success    { padding: .8em; margin-bottom: 1em; border: 2px solid #ddd; }
+
+.error      { background: #FBE3E4; color: #8a1f11; border-color: #FBC2C4; }
+.notice     { background: #FFF6BF; color: #514721; border-color: #FFD324; }
+.success    { background: #E6EFC2; color: #264409; border-color: #C6D880; }
+.error a    { color: #8a1f11; }
+.notice a   { color: #514721; }
+.success a  { color: #264409; }
+
+
+
+
+table {
+
+  width:98%; /*kb*/
+}
+
+#content-wrapper {
+
+  background:none;
+}
+
+#contenttext  {
+  text-align:justify;
+  color:black;
+  line-height:17px;
+}
+#contenttext img  {
+  margin:0;
+  padding:0;
+  background:none;
+  vertical-align:bottom;
+  border:none;
+  margin-bottom:1px;
+  width:16px;
+  height:16px;
+}
+.sidemenu ul li a span {
+  color:black;
+}
+
+div.bg  {
+  margin: 0 auto;
+  background: #fff url(../images/content-bg.gif) repeat-y center top;
+  padding-bottom: 35px;
+  padding-top: 5px;
+  overflow: auto;
+}
+
+li span a:link {
+  color:black;
+}
+
+#contenttext  ul, #contenttext li    {
+  margin:0 ;
+  padding:0;
+  float:left;
+
+}
+#contenttext ul {
+  margin-top: -20px !important;
+  margin-bottom: -20px !important;
+}
+#contenttext .h1  {
+  font-size: 2.5em ;
+  letter-spacing:0px ;
+  margin:0;
+  padding:0px;
+  vertical-align:bottom;
+  line-height:1.4em;
+}
+#contenttext .h2  {
+  font-size: 2.2em ;
+  letter-spacing:0px ;
+  margin:0;
+  padding:0px;
+  vertical-align:bottom;
+  line-height:1.4em;
+}
+#contenttext .h3  {
+  font-size: 2em ;
+  letter-spacing:0px ;
+  margin:0;
+  padding:0px;
+  vertical-align:bottom;
+  line-height:1.4em;
+}
+#contenttext .h4  {
+  font-size: 1.8em ;
+  letter-spacing:0px ;
+  margin:0;
+  padding:0px;
+  vertical-align:bottom;
+  line-height:1.4em;
+}
+#contenttext .h5 {
+  font-size: 1.6em ;
+  letter-spacing:0px ;
+  margin:0;
+  padding:0px;
+  vertical-align:bottom;
+  line-height:1.4em;
+}
+#contenttext .h6  {
+  font-size: 1.4em ;
+  letter-spacing:0px ;
+  margin:0;
+  padding:0px;
+  vertical-align:bottom;
+  line-height:1.4em;
+}
+
+
+
+#contentindex {
+  margin:0 20px;
+}
+#contentindex img {
+  text-align:center;
+}
+
+#contentindex p {
+  width:900px;
+}
+
+.left {
+  float:left;
+}
+
+.right  {
+  float:right;
+}
+.clear  {
+  clear:both;
+}
+.center {
+  margin:0 auto;
+  text-align:center;
+}
+
+
+
+
+div.scrollbox  {
+  height:400px; overflow:scroll;
+}
+
+table.userright {
+  width:450px;
+  float:right;
+}
+table.userleft {
+  width:450px;
+  float:left;
+}
+
+
+textarea.share  {
+  height:100px;
+  width:380px;
+}

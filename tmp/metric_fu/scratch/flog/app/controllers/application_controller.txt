@@ -1,0 +1,7 @@
+     6.6: flog total
+     6.6: flog/method average
+
+     6.6: ApplicationController#none
+     4.4: include
+     1.1: helper
+     1.1: protect_from_forgery

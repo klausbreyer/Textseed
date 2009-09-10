@@ -1,0 +1,45 @@
+<div class="bg">
+  <div id="main" class="grid_12">
+
+
+    <h1>Editing project</h1>
+
+    <% form_for(@project) do |f| %>
+      <%= f.error_messages %>
+
+      <p>
+        <%= f.label :subject %><br />
+        <%= f.text_field :subject %>
+      </p>
+      <p>
+        <%= f.label  "Short description" %><br />
+        <%= f.text_area :content %>
+      </p>
+      <p>
+        <%= f.label  "Public project?" %><br />
+        <%= f.check_box :public %>
+      </p>
+      <p>
+        <%= f.submit 'Update' %>
+      </p>
+    <% end %>
+
+    <%= link_to 'Show', @project %> |
+    <%= link_to 'Back', projects_path %>
+  </div>
+
+  <div class="grid_4">
+    <h3>Project abstract</h3>
+    <div class="featured-post">
+      <h4><a href="index.html"><%=h @project.subject %></a></h4>
+      <p class="post-info">Initial created by <%= link_to  @project.user.login, @project.user %> on <%= german_time @project.created_at %>  </p>
+      <p><%=h @project.content %></p>
+
+      <p> <%= link_to 'Edit project', edit_project_path(@project), :class => "more-link" %> <%= link_to 'Back', projects_path, :class => "more-link" %>
+      </p>
+    </div>
+  </div>
+
+
+</div>
+

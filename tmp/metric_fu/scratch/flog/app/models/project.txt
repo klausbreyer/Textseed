@@ -1,0 +1,8 @@
+     4.7: flog total
+     4.7: flog/method average
+
+     4.7: Project#none
+     2.2: validates_length_of
+     1.1: has_many
+     1.1: belongs_to
+     0.3: lit_fixnum

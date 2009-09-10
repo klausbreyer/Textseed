@@ -1,0 +1,27 @@
+    22.3: flog total
+     3.7: flog/method average
+
+     6.5: UserMailer#setup_email
+     6.0: assignment
+     1.2: email
+     1.2: now
+     4.3: UserMailer#forgot_password
+     2.4: assignment
+     1.2: setup_email
+     1.2: +
+     1.2: password_reset_code
+     4.3: UserMailer#signup_notification
+     2.4: assignment
+     1.2: activation_code
+     1.2: +
+     1.2: setup_email
+     3.4: UserMailer#activation
+     2.4: assignment
+     1.2: +
+     1.2: setup_email
+     2.7: UserMailer#reset_password
+     1.2: +
+     1.2: assignment
+     1.2: setup_email
+     1.1: UserMailer#none
+     1.1: protected

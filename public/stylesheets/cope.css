@@ -1,0 +1,152 @@
+/* 
+    Document   : cope
+    Created on : 17.06.2009, 22:42:40
+    Author     : kb1
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+/*
+  Dgrau: #4e4c59;
+  Hell:  #d2d6d9
+  mittel:#babdbf
+  sand:  #8c8b7b
+  braun: #493616
+*/
+body  {
+  background:#d2d6d9;
+}
+
+
+
+h1{
+  font-size:1.6em;
+}
+
+a {
+  color: #493616;
+}
+a:hover {
+  color:#4e4c59;
+  text-decoration:none;
+}
+
+
+/* overwrite grid.css */
+hr  {
+  background:#4e4c59;
+  color:#4e4c59;
+
+}
+
+hr.space {
+  background:#4e4c59;
+  color:#4e4c59;
+}
+
+div.border, div.colborder {
+  border-right:1px solid #4e4c59;
+}
+
+
+
+/* overwrite forms.css */
+input[type=text], input[type=password],
+input.text, input.title,
+textarea, select {
+  background: #8c8b7b;
+  }
+
+
+/* page definitions */
+#header {
+  height:100px;
+  background:url("../images/header.jpg");
+}
+#header>div {
+  float:right;
+  margin-top:5px;
+
+}
+#header h1  {
+  float:left;
+  font-size:3em;
+  display:block;
+  margin:0;
+  padding:0;
+
+}
+#header h2  {
+  float:left;
+  font-size:1em;
+  display:block;
+  margin:0 5px;
+  line-height:3em;
+  padding:0;
+
+}
+#menu a {
+  display:block;
+  float:left;
+  border-right: 1px solid #4e4c59;
+  padding:2px 15px;
+  text-align:center;
+  text-decoration:none;
+}
+
+#menu a:hover {
+  color:black;
+
+  background:#4e4c59;
+}
+#page  {
+  background:#babdbf;
+  width:950px;
+  margin:0 auto;
+}
+
+
+.bold {
+  font-weight:bold;
+}
+.open    {
+    color: #C41F3B;
+}
+.blocker {
+    color:#FF7D0A;
+}
+.done {
+    color: #ABD473;
+}
+.normal {
+    color: #69CCF0;
+}
+.minor {
+    color: #F58CBA;
+}
+.Priest{
+    color: #FFFFFF;
+}
+.enhancement {
+    color: #FFF569;
+}
+.major {
+    color:#2459FF ;
+}
+.critical {
+    color: #9482C9;
+}
+.warrioor {
+    color:#C79C6E ;
+}
+
+#text {
+  line-height:13px;
+  background:white;
+  padding: 10px;
+}

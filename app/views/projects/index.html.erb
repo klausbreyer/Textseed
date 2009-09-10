@@ -1,0 +1,47 @@
+<% if @private.length > 0 %>
+  <h1>Private projects</h1>
+
+  <table>
+    <tr>
+      <th>Subject</th>
+      <th>Content</th>
+      <th>First</th>
+      <th>Latest</th>
+      <th>Last edit</th>
+    </tr>
+
+    <% @private.each do |project| %>
+      <tr>
+        <td><%= link_to project.subject, project %></td>
+        <td><%=h project.content %></td>
+        <td><%= link_to project.user.login, project.user %></td>
+        <td><%= link_to(project.units.last.user.login, project.units.last.user) if project.units.last   %></td>
+        <td><%= distance_of_time_in_words(Time.now, project.units.last.created_at) if project.units.last   %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+<h1>Public projects</h1>
+
+<table>
+  <tr>
+    <th>Subject</th>
+    <th>Content</th>
+    <th>First</th>
+    <th>Latest</th>
+    <th>Last edit</th>
+  </tr>
+
+  <% @projects.each do |project| %>
+    <tr>
+      <td><%= link_to project.subject, project %></td>
+      <td><%=h project.content %></td>
+      <td><%= link_to project.user.login, project.user %></td>
+      <td><%= link_to(project.units.last.user.login, project.units.last.user) if project.units.last   %></td>
+      <td><%= distance_of_time_in_words(Time.now, project.units.last.created_at) if project.units.last   %></td>
+    </tr>
+  <% end %>
+</table>
+<br />
+
+<%= link_to 'New project', new_project_path %>

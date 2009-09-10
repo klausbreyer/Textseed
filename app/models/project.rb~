@@ -1,0 +1,7 @@
+class Project < ActiveRecord::Base
+  has_many :units, :dependent => :destroy
+  belongs_to :user
+
+
+  validates_length_of :name, :minimum => 3
+end

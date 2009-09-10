@@ -1,0 +1,42 @@
+
+
+<h1>Options</h1>
+<% form_tag :action => 'change_options_update' do |f| %>
+
+
+  <p><label for="want_mail" >Email notifications?</label><br />
+  <%= check_box_tag 'want_mail',  "true", @user.want_mail %></p>
+
+
+  <%= submit_tag 'Set options' %>
+
+<%end%>
+<h1>Change Password</h1>
+<% form_tag :action => 'change_password_update' do |f| %>
+
+
+  <p><label for="old_password" >Old password</label><br />
+  <%= password_field_tag 'old_password', @old_password, :size => 45 %></p>
+
+  <p><label for="password">New password</label> <small>(Between 8 and 40 characters)</small><br />
+  <%= password_field_tag 'password', {}, :size => 45%></p>
+
+  <p><label for="password_confirmation" >Confirm new password</label><br />
+  <%= password_field_tag 'password_confirmation', {}, :size => 45 %></p>
+
+
+  <%= submit_tag 'Change password' %>
+
+<%end%>
+
+<h1>Change Username</h1>
+<% form_tag :action => 'change_username_update' do |f| %>
+
+
+  <p><label for="username" >Old username</label><br />
+  <%= text_field_tag 'username',  @user.login %></p>
+
+
+  <%= submit_tag 'Change username' %>
+
+<%end%>

@@ -1,0 +1,111 @@
+<div class="bg">
+  <div id="main" class="grid_12">
+    <a name="TemplateInfo"></a>
+    <h2><%= link_to @project.subject, @project %></h2>
+    <% if @unit %>
+    <p class="post-info">This version is created by <%= link_to @unit.user.login, @unit.user %> on <%= german_time @unit.created_at %> </p>
+    <p id="contenttext"><%= @text %></p>
+    <% end %>
+    <p class="postmeta">
+      <%= link_to 'Change the document', write_project_path(@project) %>
+
+      <!-- <a href="index.html" class="readmore">Read more</a> |
+    <a href="index.html" class="comments">Comments (7)</a> |
+    <span class="date">April 17, 2008</span> -->
+    </p>
+  </div>
+
+  <div class="grid_4">
+    <h3>Project abstract</h3>
+    <div class="featured-post">
+      <h4><a href="index.html"><%=h @project.subject %></a></h4>
+      <p class="post-info">Initial created by <%= link_to  @project.user.login, @project.user %> on <%= german_time @project.created_at %>  </p>
+      <p><%=h @project.content %></p>
+
+      <p> <%= link_to 'Edit project', edit_project_path(@project), :class => "more-link" %> <%= link_to 'Back', projects_path, :class => "more-link" %>
+      </p>
+    </div>
+    <div class="sidemenu">
+      <h4>Versions</h4>
+      <ul>
+        <% @units.each do |unit| %>
+          <li><a href="?version=<%=  unit.id%>"><%= german_time unit.created_at %> <span style="background:<%= controller.id_to_color(unit.user_id) %>">Created by <%= unit.user.login %></span> </a></li>
+        <% end  %>
+      </ul>
+    </div>
+
+  </div>
+
+
+</div>
+
+
+<!--
+<%
+
+=begin
+%>
+<b>Erg:</b><%= @erg %><br />
+
+<b>resolv:</b><%= @resolv %>
+<br /> <br />
+
+<table style="width:auto;">
+<tr>
+<% 0.step(@ergarray.length-1) do |x| %>
+  <td><%= x %></td>
+<% end  %>
+</tr>
+<tr>
+<% @ergarray.each do |erg| %>
+  <td><%= erg %></td>
+<% end  %>
+</tr>
+<tr>
+<% @resarray.each do |erg| %>
+  <td><%= erg %></td>
+<% end  %>
+</tr>
+<tr >
+<td></td>
+</tr>
+<tr>
+<% @satzarray.each do |erg| %>
+  <td><%= erg %></td>
+<% end  %>
+</tr>
+<tr>
+<% @oldsatzarray.each do |erg| %>
+  <td><%= erg %></td>
+<% end  %>
+</tr>
+<tr>
+<% @newsatzarray.each do |erg| %>
+  <td><%= erg %></td>
+<% end  %>
+</tr>
+<tr>
+<% @newresolvarray.each do |erg| %>
+  <td><%= erg %></td>
+<% end  %>
+</tr>
+
+<tr>
+<% @old_pointer_log.each do |erg| %>
+  <td><%= erg %></td>
+<% end  %>
+</tr>
+
+<tr>
+<% @new_pointer_log.each do |erg| %>
+  <td><%= erg %></td>
+<% end  %>
+</tr>
+
+</table>
+
+<%
+=end
+%>
+
+-->

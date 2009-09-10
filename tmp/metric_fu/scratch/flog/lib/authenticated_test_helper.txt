@@ -1,0 +1,16 @@
+    10.3: flog total
+     5.1: flog/method average
+
+     5.9: AuthenticatedTestHelper#authorize_as
+     1.7: users
+     1.5: login
+     1.3: encode_credentials
+     1.2: assignment
+     1.2: branch
+     1.2: env
+     4.3: AuthenticatedTestHelper#login_as
+     1.5: users
+     1.3: id
+     1.2: branch
+     1.2: session
+     1.2: assignment

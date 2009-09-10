@@ -1,0 +1,20 @@
+<h1>Editing my profile</h1>
+
+<% form_for(@user, :url => :profile_edit) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <label style="float:left;">Current Color</label><br />
+    <div style="background:<%=h @user.color  %>; width:100px; height:20px; ">&nbsp;</div>
+    
+  </p>
+  <br />
+<p>
+    <%= f.label :color %><br />
+    <%= f.text_field :color %>
+  </p>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>

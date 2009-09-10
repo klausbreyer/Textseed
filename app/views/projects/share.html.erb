@@ -1,0 +1,21 @@
+<h1>Share the document</h1>
+<p>
+  Fill in the textbox email-addresses from users which you want to invite to this project.
+</p>
+<!--
+<p>
+  If an email-address is allready registered here, then the user get instant access to your project.
+  However, when an email-address is not registered, we create an account for the potential user and send him an email with the credentials access for this project.
+</p>
+-->
+<% form_tag(:action => :invite_consumer, :id => @project.id) do %>
+  <p>
+    <%= label_tag "Email-addresses" %><br />
+    <%= text_area_tag :emails, "", :class => "share" %>
+  </p>
+  <p>
+    <%= submit_tag('share') %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', @project %>

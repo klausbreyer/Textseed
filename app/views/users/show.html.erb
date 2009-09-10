@@ -1,0 +1,90 @@
+
+<table class="userright" style="
+       margin-top:120px;">
+  <tr>
+    <th>Public documents</th>
+    <td><%= @public_projects %></td>
+
+  </tr>
+  <tr>
+    <th>Private documents</th>
+    <td><%= @private_projects %></td>
+  </tr>
+
+  <tr>
+    <th>Public changes</th>
+    <td><%= @public_changes %></td>
+
+  </tr>
+  <tr>
+    <th>Private changes</th>
+    <td><%= @private_changes %></td>
+
+  </tr>
+
+</table>
+
+<h1><%= @user.login %></h1>
+<p>  <%= gravatar_for @user %>
+</p>
+<p>
+  <b>Id</b>
+  <%=h @user.id %>
+</p>
+<p>
+  <b>Login</b>
+  <%=h @user.login %>
+</p>
+
+<p>
+  <b>Signed Up</b>
+  <%=h german_time @user.created_at %>
+</p>
+<% if @activity  %>
+  <h3>Activity</h3>
+  <p>
+    <%= image_tag @activity %>
+
+  </p>
+<% end %>
+
+<table class="userleft">
+  <tr>
+    <th>Last created public projects</th>
+    <th>#changes</th>
+    <th>Date</th>
+  </tr>
+  <% @projects.each do |project| %>
+    <tr>
+      <td>
+        <%= link_to h(project.subject), project %>
+      </td>
+      <td>
+        <%= project.units.length %>
+      </td>
+      <td>
+        <%= german_time project.created_at %>
+      </td>
+    </tr>
+
+  <% end  %>
+
+</table>
+<table class="userright">
+  <tr>
+    <th>Last public changes</th>
+    <th>Since</th>
+
+  </tr>
+  <% @changes.each do |change| %>
+    <tr>
+      <td>
+        <%= link_to h(change.project.subject),  change.project %>
+      </td>
+      <td>
+        <%=  distance_of_time_in_words(Time.now, change.created_at) %>
+      </td>
+    </tr>
+
+  <% end  %>
+</table>

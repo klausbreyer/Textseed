@@ -1,0 +1,8 @@
+nbproject/*
+log/*
+config/database.yml
+first
+second
+db/production.sqlite3
+db/test.sqlite3
+db/development.sqlite3

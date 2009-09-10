@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Echoes: <%= controller.controller_name %>: <%= controller.action_name %></title>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <meta name="author" content="Erwin Aligam - styleshout.com" />
+    <meta name="description" content="Echoes everywhere collaborative text writing" />
+    <meta name="keywords" content="keywords, here" />
+    <%= stylesheet_link_tag 'screen.css' %>
+    <script type="text/javascript">
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+      try {
+        var pageTracker = _gat._getTracker("UA-1885809-14");
+        pageTracker._trackPageview();
+      } catch(err) {}
+    </script>
+  </head>
+  <body>
+
+    <!-- header starts-->
+    <div id="header-wrap"><div id="header" class="container_16">
+
+        <h1 id="logo-text"><a href="/" title="">Organic writing</a></h1>
+        <p id="intro">No one is as smart as all of us</p>
+
+        <!-- navigation -->
+        <div  id="nav">
+          <ul>
+            <li <%= "id=\"current\"" if controller.controller_name == "content" && controller.action_name =="index" %>><%= link_to  "home","/" %></li>
+          <!--    <li <%= "id=\"current\"" if controller.controller_name == "content" && controller.action_name =="tutorial" %>><%= link_to  "tutorial","/tutorial" %></li>
+        -->    <li <%= "id=\"current\"" if controller.controller_name == "projects"%>><a href="/projects">projects</a></li>
+            <li <%= "id=\"current\"" if controller.controller_name == "users" &&
+
+                                        (!params[:id] || !self.current_user || params[:id].to_i != self.current_user.id.to_i) &&
+                                        request.request_uri  != "/profile"  &&
+                                        request.request_uri  != "/signup" &&
+                                        request.request_uri  != "/change_password" &&
+                                        request.request_uri  != "/profile_edit"  %>><%= link_to "users", "/users" %></li>
+            <% if !self.current_user %>
+              <li <%= "id=\"current\"" if request.request_uri  == "/login" || request.request_uri  == "/session/new"%>><%= link_to "login", "/login" %></li>
+              <li <%= "id=\"current\"" if request.request_uri  == "/signup"%>><%= link_to "signup", "/signup" %></li>
+
+            <% else %>
+              <!-- <li <%= "id=\"current\"" if  request.request_uri  == "/profile" ||
+                                                request.request_uri  == "/profile_edit" %>><a href="/profile">edit profile</a></li>
+              -->         
+              <li <%= "id=\"current\"" if request.request_uri  == "/profile" %>><%= link_to "options", "/profile" %></li>
+                       <li <%= "id=\"current\"" if controller.controller_name == "users" &&
+                                                   params[:id].to_i == self.current_user.id.to_i  %>><%= link_to "my profile", self.current_user %></li>
+              <li><a href="/logout">logout</a></li>
+            <% end  %>
+          </ul>
+        </div>
+
+        <div id="header-image"></div>
+
+        <form id="quick-search" action="" method="get" >
+          <p>
+            <label for="qsearch">Search:</label>
+            <input class="tbox" id="qsearch" type="text" name="qsearch" value="not implemented " title="Start typing and hit ENTER" />
+            <input class="btn" alt="Search" type="image" name="searchsubmit" title="Search" src="/images/search.gif" />
+          </p>
+        </form>
+
+        <!-- header ends here -->
+    </div></div>
+
+    <!-- content starts -->
+    <div id="content-outer"><div id="content-wrapper" class="container_16">
+
+        <% if flash[:notice] %>
+          <div class="success"><%= flash[:notice] %></div>
+        <% end  %>
+        <% if flash[:alert] %>
+          <div class="error"><%= flash[:alert] %></div>
+        <% end  %>
+        <% if flash[:error] %>
+          <div class="error"><%= flash[:error] %></div>
+        <% end  %>
+
+        <%= yield %>
+
+        <!-- contents end here -->
+    </div></div>
+
+    <!-- footer starts here -->
+    <div id="footer-wrapper" class="container_16">
+      <div id="footer-bottom">
+        <p class="bottom-left">
+          &nbsp; &copy;2009 <%= link_to "kb", "http://zerfall.com" %> - Echoes&nbsp; &nbsp;
+          Design by : <a href="http://www.styleshout.com/">styleshout</a>
+          <br />
+        <%= image_tag "rails.png", :style => "margin-left:-100px; margin-top:-20px" %>
+        </p>
+        <p class="bottom-right" >
+          <a href="/">Home</a> |
+          <a href="http://echoes.zerfall.com">Development-Blog</a> |
+          <a href="/imprint">imprint</a> |
+          <a href="/tutorial">tutorial</a> |
+          <a href="/terms">terms</a> |
+          <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a> |
+          <a href="http://validator.w3.org/check/referer">XHTML</a>
+        </p>
+      </div>
+    </div>
+    <!-- footer ends here -->
+
+  </body>
+</html>
+

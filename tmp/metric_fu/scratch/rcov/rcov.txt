@@ -1,0 +1,1333 @@
+Loaded suite /var/lib/gems/1.8/bin/rcov
+Started
+EBrowsingTest#test_homepage (0 ms warmup)
+E        process_time: 20 ms
+              memory: unsupported
+             objects: unsupported
+F
+Finished in 0.327326 seconds.
+
+  1) Error:
+test_homepage(BrowsingTest):
+ActiveRecord::StatementInvalid: SQLite3::SQLException: no such table: users: DELETE FROM "users" WHERE 1=1
+    
+
+  2) Error:
+test_homepage(BrowsingTest):
+ActiveRecord::StatementInvalid: SQLite3::SQLException: no such table: users: DELETE FROM "users" WHERE 1=1
+    (__DELEGATION__):2:in `__send__'
+    (__DELEGATION__):2:in `run_test'
+
+  3) Failure:
+default_test(UserTest) [/var/lib/gems/1.8/bin/rcov:19]:
+No tests were specified.
+
+4 tests, 1 assertions, 1 failures, 2 errors
+================================================================================
+app/models/unit.rb
+================================================================================
+   class Unit < ActiveRecord::Base
+     belongs_to :project
+     belongs_to :user
+   
+   
+     validates_length_of       :content,    :maximum => 10000
+     serialize :echoe
+   
+   
+   
+     def render 
+!!     text = ""
+!!     if echoe
+!!      
+!! 
+!! 
+!!       #settings for replacements
+!!       wholeline = {
+!!         "h1." => ["<br /><span class=\"h1\">", "</span>"],
+!!         "h2." => ["<br /><span class=\"h2\">", "</span>"],
+!!         "h3." => ["<br /><span class=\"h3\">", "</span>"],
+!!         "h4." => ["<br /><span class=\"h4\">", "</span>"],
+!!         "h5." => ["<br /><span class=\"h5\">", "</span>"],
+!!         "h6." => ["<br /><span class=\"h6\">", "</span>"],
+!!         "p." => ["<p>", "</p>"],
+!! 
+!!         "bq." => ["<blockquote>", "</blockquote>"],
+!!         "pre." => ["<pre>", "</pre>"],
+!!         "*" => ["&nbsp;&bull;&nbsp;", ""],
+!!         "**" => ["&nbsp; &nbsp;&bull;&nbsp;", ""]
+!!       }
+!!       inline = {
+!!         "**" => ["<b>", "</b>"],
+!!         "*" => ["<strong>", "</strong"],
+!!         "_" => ["<em>", "</em>"],
+!!         "__" => ["<i>", "</i>"],
+!!         "??" => ["<cite>", "</cite>"],
+!!         "\"" => ["“", "”"],
+!!         "'" => ["‘", "’"]
+!!       }
+!!       after_replacements = {
+!!         "-" => "–",
+!!         "--" => "—",
+!!         "(r)" => "®",
+!!         "(c)" => "©",
+!!         "(tm)" => "™"
+!!       }
+!! 
+!!       #possibilities for links missing.
+!! 
+!!      
+!!       # replacements die davor gemacht werden #########################################
+!! 
+!!       wholeline_entity = ""
+!!       wholeline_content  = ""
+!!       inline_key = ""
+!!       inline_i = ""
+!!       is_inlist = false #flag ob der parser im aktuellen block gerade eine ul abhandelt
+!!       is_instar = false #flag ob der parser in der aktuellen zeile gerade eine li abhandelt
+!!       max = echoe.length
+!!       i = 0
+!! 
+!!       while echoe && i <= max
+!! 
+!!         if wholeline_entity != ""
+!!           wholeline_content += echoe[i][0]
+!!         end
+!!         #markup whats defined for one whole line
+!!         wholeline.each do |key, value|
+!!           if echoe[i] && echoe[i][0] == key && (i==0 || echoe[i-1][0] == "[br]")
+!!             ##check thats the start of the line or start of the text
+!!             echoe[i][0] = value[0]
+!!             echoe[i][2] = 9
+!!             wholeline_entity = value[1]
+!!           end
+!!         end if wholeline_entity == ""
+!!         #clear at the end of the line or end of the document
+!!         if i == max || (echoe[i][0] == "[br]" && wholeline_entity != "")
+!!           echoe.insert(i, [wholeline_entity, 0, 9])   #really 9 ?
+!!           max += 1 if i != max #or for ever loop
+!!           wholeline_entity = ""
+!!           #for the directory
+!!         end
+!! 
+!!         #markup for lists here
+!!         #makrup for unordered lists
+!!         if wholeline_entity == ""  #wenn gerade keine normale entity abgearbeitet wird wie ne überschrift.
+!!           if echoe[i][0] == "*" && (i==0 || echoe[i-1][0] == "[br]" || echoe[i-1][0] == "</li>"|| echoe[i-1][2] == -1 )  #anfang der zeile oder nach gelöschtem wort (todo: nicht so optimal)
+!!             echoe[i][0] = "<li>"
+!!             echoe[i][2] = 9
+!!             if !is_inlist
+!!               echoe.insert(i, ["<ul>", 0, 9])   #really 9 ?
+!!               max += 1
+!!             end
+!!             is_inlist = true
+!!             is_instar = true
+!!           end
+!!           if (i == max || echoe[i][0] == "[br]") && is_inlist && is_instar  #ende der zeile
+!!             echoe[i] = ["</li>", 0, 9]   #really 9 ? ersetzen und nicht einfügen weil sonst ein br am ende zu viel da ist.
+!!             is_instar = false
+!!             if echoe[i+1] && echoe[i+1][0] == "*"
+!!               is_inlist = true
+!!             else
+!!               is_inlist = false
+!!             end
+!!             if !is_inlist
+!!               echoe.insert(i, ["</ul>", 0, 9])   #really 9 ?
+!!               max += 1 if i != max #or for ever loop
+!!             end
+!!           end
+!!         end
+!!         #check the sentence-markup
+!!         if wholeline_entity == ""
+!!           inline.each do |key, value|
+!!             if (echoe[i][0][0,1] == key || echoe[i][0][0,2] == key) && echoe[i][0].length > 1
+!!               inline_i = i
+!!               inline_key = key
+!!             end
+!!             #is ready if the end is in the same word!
+!!             if (echoe[i][0][-1,1] == key || echoe[i][0][-2,2] == key) && inline_key == key && i != max
+!!               #cut the signs
+!!               if echoe[i][0][-1,1] == key
+!!                 echoe[inline_i][0] = echoe[inline_i][0][1..-1]
+!!                 echoe[i][0] = echoe[i][0][0..-2]
+!! 
+!!               end
+!!               #insert the markup
+!!               echoe.insert(i+1, [value[1], 0, 9])   #really 9 ?
+!!               echoe.insert(inline_i, [value[0], 0, 9])   #really 9 ?
+!!               inline_i = 0
+!!               inline_key = ""
+!!               max+= 2
+!!             end
+!!           end
+!!         end
+!!         i+=1
+!!       end
+!! 
+!! 
+!! 
+!! 
+!!       # rendering ####################################################
+!!       temptext = ""
+!!       i  = 0
+!!       while echoe && i < echoe.length
+!!         if echoe[i][1] == "x"
+!!           echoe[i][1] = 1
+!!         end
+!! 
+!!         if echoe[i][0] == "[br]"
+!!           text += "<br />\n"
+!! 
+!!         elsif echoe[i][2] == 9
+!!           text += echoe[i][0]
+!!         elsif echoe[i][2] == -1
+!!           temptext += h echoe[i][0] + " "
+!!           if !echoe[i+1] || echoe[i][1] != echoe[i+1][1] || echoe[i][2] != echoe[i+1][2] || echoe[i+1][0] == "[br]"
+!!             if temptext.length > 1
+!!               temptext = temptext[0,(temptext.length-1)]
+!!             end
+!!             #text += "&nbsp;"
+!!             text += "<span style=\"background:#eee; border: 2px solid #{Unit.id_to_color(echoe[i][1], project.id)};\" title=\"" + temptext + "\" onmouseover=\"this.innerHTML=this.title; this.title='Deleted Text'\" onmouseout=\"this.title=this.innerHTML; this.innerHTML='&nbsp;'\">&nbsp;</span>&nbsp;"
+!!             temptext = ""
+!!           end
+!!         elsif echoe[i][2] == 1
+!!           temptext += h echoe[i][0] + " "
+!!           if !echoe[i+1] || echoe[i][1] != echoe[i+1][1] || echoe[i][2] != echoe[i+1][2] || echoe[i+1][0] == "[br]"
+!!             if temptext.length > 1
+!!               temptext = temptext[0,(temptext.length-1)]
+!!             end
+!!             # text += "<span style=\"background: #{id_to_color(echoe[i][1], @project.id)};border: 2px solid #{id_to_color(echoe[i][1], @project.id)};\"><img src=\"/images/icons/add.png\"  title=\"added\" alt=\"added\" /> " + temptext + "</span>&nbsp;"
+!!             text += "<span style=\"background: #{Unit.id_to_color(echoe[i][1], project.id)};border: 2px solid black;\">" + temptext + "</span>&nbsp;"
+!!             temptext = ""
+!!           end
+!!         else
+!!           temptext += h echoe[i][0] + " "
+!!           if !echoe[i+1] || echoe[i][1] != echoe[i+1][1] || echoe[i][2] != echoe[i+1][2] || echoe[i+1][0] == "[br]"
+!!             if temptext.length > 1
+!!               temptext = temptext[0,(temptext.length-1)]
+!!             end
+!!             text += "<span style=\"background: #{Unit.id_to_color(echoe[i][1], project.id)};\">" + temptext + "</span>&nbsp;"
+!!             temptext = ""
+!! 
+!!           end
+!!         end
+!!         i+= 1
+!!       end
+!! 
+!! 
+!! 
+!!       # nachbearbeitung #######################################################
+!!       after_replacements.each do |key, value|
+!!         text = text.gsub(key, value)
+!!       end
+!!  
+!! 
+!!     end
+!!     text
+!!   end
+   
+   
+     def self.id_to_color i, project_id
+!!     @userremember = [] unless @userremember
+!!     return '#ffffff' if i == 0
+!!     return @userremember[i] if @userremember[i]
+!!     r = g= b = 55
+!! 
+!! 
+!!     srand i*project_id+i+project_id*i*project_id+i+project_id+i*project_id+i+project_id*i*project_id+i+project_id*i*project_id+i+project_id+i*project_id+i+project_id
+!! 
+!!     #endlosschleife
+!!     while leuchtkraft(r,g,b) < 180.0 #|| leuchtkraft(r,g,b) > 230
+!!       r = rand 255
+!!       g = rand 255
+!!       b = rand 255
+!!     end
+!! 
+!! 
+!!     erg = convback(r,g,b)
+!! 
+!!     @userremember[i] = erg
+!!     #puts "#{i.to_s}: " + leuchtkraft(r,g,b).to_s + " erg: #{erg}"
+!!     erg
+!!   end
+     private
+     def self.leuchtkraft r, g, b #http://home.arcor.de/ulile/node52.html
+!!     0.3*r+0.59*g+0.11*b
+!!   end
+     def self.convback r,g,b
+!!     ergs = [r.to_i.to_s(16), g.to_i.to_s(16), b.to_i.to_s(16)]
+!!     i=0
+!!     while i < ergs.length
+!!       ergs[i] = "0" + ergs[i] if ergs[i].length == 1
+!!       i+=1
+!!     end
+!!     "#" + ergs[0] + ergs[1] + ergs[2]
+!!   end
+!! end
+================================================================================
+app/controllers/projects_controller.rb
+================================================================================
+   require 'RedCloth'
+   class ProjectsController < ApplicationController
+     # GET /projects
+     # GET /projects.xml
+     before_filter :login_required, :except => [:index, :show]
+   
+     include ERB::Util
+     include ActionView::Helpers::AssetTagHelper
+   
+     def invite_consumer
+       
+     end
+   
+     
+     def index
+!!     @projects = Project.all(:order => "updated_at desc")
+!!     respond_to do |format|
+!!       format.html # index.html.erb
+!!       format.xml  { render :xml => @projects }
+!!     end
+!!   end
+   
+     # GET /projects/1
+     # GET /projects/1.xml
+     def show
+!!     @project = Project.find(params[:id])
+!!     @units = Unit.find_all_by_project_id(params[:id], :order => "created_at desc")
+!! 
+!!     @editor = User.find(@project.edited_by) if @project.edited_by && Time.now.to_s(:db).to_s.to_time < 5.minutes.since(@project.edited_at).to_s.to_time
+!! 
+!!     if params[:version]
+!!       @unit = Unit.find(params[:version])
+!!       unless @unit.project_id == @project.id
+!!         redirect_to :back
+!!         return
+!!       end
+!!     else
+!!       @unit = @units.first
+!!     end
+!! 
+!!     if @unit
+!!       #build userlist
+!!       usera = []
+!!       @units.each do |unit|
+!!         if !usera.include?(unit.user_id)
+!!           usera << unit.user_id
+!!         end
+!!       end
+!!       @users = []
+!!       usera.each do |user|
+!!         @users << User.find(user)
+!!       end
+!!     end
+!! 
+!!     @text = @unit.render
+!!   
+!! 
+!!     
+!! 
+!!     respond_to do |format|
+!!       format.html # show.html.erb
+!!       format.xml  { render :xml => @project }
+!!     end
+!!   end
+   
+     def change
+!!     @unit = Unit.new(params[:unit])
+!!     @unit.user_id = session[:user_id]
+!! 
+!!     last = Unit.find_by_project_id(params[:id], :order => "created_at desc")
+!!     if last
+!!       first_content = last.content
+!!     else
+!!       first_content = ""
+!!     end
+!!     second_content = @unit.content
+!!     
+!!     File.open("first", 'w') do |f|
+!!       f.write(first_content)
+!!     end
+!!     File.open("second", 'w') do |f|
+!!       f.write(second_content)
+!!     end
+!! 
+!!     erg = `wdiff first second `
+!! 
+!!     if(request.host != "localhost")
+!!       erg = erg.gsub("-]\n", "-]")
+!!     end
+!! 
+!!     erg = erg.gsub("-]\r\n", "-]")  #normal fix i think
+!!     erg = erg.gsub("-]{+", "-] {+") #bugged - dont know why.
+!! 
+!! 
+!!     # the new
+!! 
+!!     #wort für wort wird durchgegangen vom neuen text. dann wird im alten array
+!!     #wenn es gelöscht worden ist, bleibt es drin wird aber als gelöscht markiert.
+!!     #wenn es alt ist wird solange der index erhöht bis das wort wieder passt ---------- lies sich nicht sauber tracken an welchem wort man war.
+!!     #wenn es neu ist wird einfach das neue wort mit dem neuen user abgespeichert
+!!     #todo: weg von @vars
+!!     if last && last.echoe
+!!       @old_array = last.echoe #old array is the old data - readed from the table.
+!!     else
+!!       @old_array = []
+!!     end
+!!     
+!!     #splitting the result
+!!     @outer = []
+!!     @all = erg.split("\r\n")
+!!     @all.each do |row|
+!!       @outer << row.split(" ")
+!!     end
+!!     modus = 0
+!!     userid = 0
+!!     @result = []
+!!     oi = 0      #oldindex - counts only when an old word is added.
+!!     #by the oldindex we can grab back to the old text and insert the original user id
+!!     @outer.each do |inner|
+!!       inner.each do |row|
+!!         if row[0,2] == "{+" #change mode and shorten the string
+!!           modus = 1
+!!           row = row[2..-1]
+!!         elsif row[0,2] == "[-"  #same
+!!           modus = -1
+!!           row = row[2..-1]
+!!         end
+!!         #no elsif because the end of the string can be in the same word
+!!         if row[-2,2] == "+}" || row[-2,2] == "-]" #short but dont change mode because this iteration should be done in the old mode
+!!           row = row[0..-3 ]
+!!           reset = true
+!!         end
+!!         #vielleicht hat der zu viele offset mi t der versetztheit des reset zu tun?
+!!         if modus == 1 #if its an normal word or an deleted word (which is in the old array included), then increment the oldindex and use the old user id
+!!           userid = session[:user_id]#
+!!         else  #else its new
+!!           while  oi < (@old_array.length-1) && @old_array[oi][0] != row
+!!             oi+=1
+!!           end
+!!           if @old_array[oi]
+!!             userid = @old_array[oi][1]
+!!           else
+!!             userid = session[:user_id]
+!!           end
+!!           
+!!           # puts @old_array[oi][0] + "bei #{oi}"
+!!           #oi+=1
+!!         end
+!!         @result << [row, userid, modus]
+!! 
+!!         if reset
+!!           modus = 0
+!!         end
+!!       end
+!!       @result << ["[br]", userid, modus]
+!!     end
+!! 
+!!     @result.pop
+!! 
+!! 
+!!     @unit.resolv = erg
+!!     @unit.echoe = @result
+!! 
+!!     @unit.project.updated_at = Time.now
+!!     @unit.project.edited_at = nil
+!!     @unit.project.edited_by = nil
+!!     @unit.project.save
+!!     respond_to do |format|
+!!       if @unit.save
+!!         flash[:notice] = 'Changed!'
+!!         format.html { redirect_to(@unit.project) }
+!!       else
+!!         format.html { render :action => "write" }
+!!       end
+!!     end
+!!   end
+     # GET /projects/new
+     # GET /projects/new.xml
+     def new
+!!     @project = Project.new
+!! 
+!!     respond_to do |format|
+!!       format.html # new.html.erb
+!!       format.xml  { render :xml => @project }
+!!     end
+!!   end
+   
+     # GET /projects/1/edit
+     def edit
+!!     @project = Project.find(params[:id])
+!!     @units = Unit.find_all_by_project_id(params[:id])
+!! 
+!!   end
+   
+     # POST /projects
+     # POST /projects.xml
+     def create
+!!     @project = Project.new(params[:project])
+!!     @project.user_id = session[:user_id]
+!! 
+!!     respond_to do |format|
+!!       if @project.save
+!!         flash[:notice] = 'Project was successfully created.'
+!!         format.html { redirect_to(@project) }
+!!         format.xml  { render :xml => @project, :status => :created, :location => @project }
+!!       else
+!!         format.html { render :action => "new" }
+!!         format.xml  { render :xml => @project.errors, :status => :unprocessable_entity }
+!!       end
+!!     end
+!!   end
+   
+     # PUT /projects/1
+     # PUT /projects/1.xml
+     def update
+!!     @project = Project.find(params[:id])
+!! 
+!!     respond_to do |format|
+!!       if @project.update_attributes(params[:project])
+!!         flash[:notice] = 'Project was successfully updated.'
+!!         format.html { redirect_to(@project) }
+!!         format.xml  { head :ok }
+!!       else
+!!         format.html { render :action => "edit" }
+!!         format.xml  { render :xml => @project.errors, :status => :unprocessable_entity }
+!!       end
+!!     end
+!!   end
+   
+     # DELETE /projects/1
+     # DELETE /projects/1.xml
+     def destroy
+!!     @project = Project.find(params[:id])
+!!     @project.destroy
+!! 
+!!     respond_to do |format|
+!!       format.html { redirect_to(projects_url) }
+!!       format.xml  { head :ok }
+!!     end
+!!   end
+   
+     def write
+!!     @project = Project.find(params[:id])
+!!     @editor = User.find(@project.edited_by) if @project.edited_by && Time.now.to_s(:db).to_s.to_time < 5.minutes.since(@project.edited_at).to_s.to_time
+!! 
+!!     unless @editor
+!!       @project.edited_by = session[:user_id]
+!!       @project.edited_at = DateTime.now
+!!       @project.save
+!!     end
+!! 
+!!     last = Unit.find_by_project_id(params[:id], :order => "created_at desc")
+!!     @unit = Unit.new(:project => @project)
+!!     if last
+!!       @unit.content = last.content
+!!       @unit.resolv = last.resolv
+!!     end
+!! 
+!!   end
+!! 
+!! 
+!! end
+   
+================================================================================
+app/controllers/users_controller.rb
+================================================================================
+   class UsersController < ApplicationController
+     # Be sure to include AuthenticationSystem in  Application Controller instead
+     include AuthenticatedSystem
+     before_filter :login_required, :only => [:profile]
+   
+     def show
+!!     @user = User.find(params[:id])
+!!     @public_projects = Project.find_all_by_user_id(params[:id]).length
+!!     @public_changes = Unit.find_all_by_user_id(params[:id]).length
+!!     @projects = Project.find_all_by_user_id(params[:id], :limit => 5, :order => "created_at DESC")
+!!     @changes = Unit.find_all_by_user_id(params[:id], :limit => 5, :order => "created_at DESC")
+!! 
+!!     #last 10 day activity
+!!     data = []
+!!     labels = []
+!!     20.downto(0) do |i|
+!!       ober = (i-1).days.until(Date.today.midnight)
+!!       unter = i.days.until(Date.today.midnight)
+!!       data << Unit.find_all_by_user_id(params[:id], :conditions => ["created_at > :unter and created_at < :ober ", {:unter => unter, :ober => ober}]).length
+!!       labels << i.days.until(Date.today.midnight).to_date.to_s(:short)
+!!     end
+!! 
+!!     @activity = GoogleChart.new
+!!     @activity.type = :line
+!!     @activity.height = 200
+!!     @activity.width = 920
+!!     @activity.data = data
+!!     @activity.labels = labels
+!!     @activity.title = "Last 20 days"
+!! 
+!!     @activity = @activity.to_url
+!!   end
+   
+     def index
+!!     @users = User.all
+!!   end
+   
+     def new
+     end
+   
+   
+   
+   
+     def create
+!!     cookies.delete :auth_token
+!!     # protects against session fixation attacks, wreaks havoc with 
+!!     # request forgery protection.
+!!     # uncomment at your own risk
+!!     # reset_session
+!!     @user = User.new(params[:user])
+!!     # @user.color = COLORS[rand(COLORS.length)] #choose a custom color for him
+!! 
+!!     @user.save
+!!     if @user.errors.empty?
+!!       # self.current_user = @user
+!!       redirect_back_or_default('/')
+!!       flash[:notice] = "Thanks for signing up! You received an email with an link to complete your activation"
+!!     else
+!!       flash[:error]  = "We couldn't set up that account, sorry.  Please try again, or contact an admin."
+!!       render :action => 'new'
+!!     end
+!!   end
+   
+     def activate
+!!     self.current_user = params[:activation_code].blank? ? false : User.find_by_activation_code(params[:activation_code])
+!!     if logged_in? && !current_user.active?
+!!       current_user.activate
+!!       flash[:notice] = "Signup complete!"
+!!     end
+!!     redirect_back_or_default('/')
+!!   end
+     #
+     # Change user passowrd
+     def profile
+!!     @user = User.find(session[:user_id])
+!!   end
+   
+   
+     def change_options_update
+!!     @user = User.find(session[:user_id])
+!!     if params[:want_mail]
+!!       @user.want_mail = true
+!!     else
+!!       
+!!       @user.want_mail = false
+!!     end
+!!     if @user.save
+!!       flash[:notice] = 'Options are successfully updated.'
+!!       redirect_to :action => :profile
+!!     else
+!!       flash[:alert] = "An error occured"
+!!       redirect_to :action => :profile
+!!     end
+!!   end
+     
+     def change_username_update
+!!     @user = User.find(session[:user_id])
+!!     @user.login = params[:username]
+!!     if @user.save
+!!       flash[:notice] = 'Username was successfully updated.'
+!!       redirect_to :action => :profile
+!!     else
+!!       flash[:alert] = "Username allready taken!"
+!!       redirect_to :action => :profile
+!!     end
+!!   end
+   
+     def change_password_update
+!!     return unless request.post?
+!!     if User.authenticate(current_user.email, params[:old_password])
+!!       if ((params[:password] == params[:password_confirmation]) &&
+!!             !params[:password_confirmation].blank?)
+!!         current_user.password_confirmation = params[:password_confirmation]
+!!         current_user.password = params[:password]
+!! 
+!!         if current_user.save
+!!           flash[:notice] = "Password successfully updated"
+!! 
+!!           redirect_to :action => :profile
+!!         else
+!!           flash[:alert] = "Password not changed"
+!!           redirect_to :action => :profile
+!!         end
+!! 
+!!       else
+!!         flash[:alert] = "New Password mismatch"
+!!         @old_password = params[:old_password]
+!!         redirect_to :action => :profile
+!!       end
+!!     else
+!!       flash[:alert] = "Old password incorrect"
+!!       redirect_to :action => :profile
+!!     end
+!!   end
+   
+     #gain email address
+     def forgot_password
+!!     return unless request.post?
+!!     if @user = User.find_by_email(params[:user][:email])
+!!       @user.forgot_password
+!!       @user.save
+!!       redirect_back_or_default('/')
+!!       flash[:notice] = "A password reset link has been sent to your email address"
+!!     else
+!!       flash[:alert] = "Could not find a user with that email address"
+!!     end
+!!   end
+   
+     #reset password
+     def reset_password
+!!     @user = User.find_by_password_reset_code(params[:id])
+!!     return if @user unless params[:user]
+!! 
+!!     if ((params[:user][:password] && params[:user][:password_confirmation]) &&
+!!           !params[:user][:password_confirmation].blank?)
+!!       self.current_user = @user #for the next two lines to work
+!!       current_user.password_confirmation = params[:user][:password_confirmation]
+!!       current_user.password = params[:user][:password]
+!!       @user.reset_password
+!!       flash[:notice] = current_user.save ? "Password reset success." : "Password reset failed."
+!!       redirect_back_or_default('/')
+!!     else
+!!       flash[:alert] = "Password mismatch"
+!!     end
+!!   end
+!!   
+!! end
+================================================================================
+app/controllers/consumers_controller.rb
+================================================================================
+   class ConsumersController < ApplicationController
+     # GET /consumers
+     # GET /consumers.xml
+     def index
+!!     @consumers = Consumer.all
+!! 
+!!     respond_to do |format|
+!!       format.html # index.html.erb
+!!       format.xml  { render :xml => @consumers }
+!!     end
+!!   end
+   
+     # GET /consumers/1
+     # GET /consumers/1.xml
+     def show
+!!     @consumer = Consumer.find(params[:id])
+!! 
+!!     respond_to do |format|
+!!       format.html # show.html.erb
+!!       format.xml  { render :xml => @consumer }
+!!     end
+!!   end
+   
+     # GET /consumers/new
+     # GET /consumers/new.xml
+     def new
+!!     @consumer = Consumer.new
+!! 
+!!     respond_to do |format|
+!!       format.html # new.html.erb
+!!       format.xml  { render :xml => @consumer }
+!!     end
+!!   end
+   
+     # GET /consumers/1/edit
+     def edit
+!!     @consumer = Consumer.find(params[:id])
+!!   end
+   
+     # POST /consumers
+     # POST /consumers.xml
+     def create
+!!     @consumer = Consumer.new(params[:consumer])
+!! 
+!!     respond_to do |format|
+!!       if @consumer.save
+!!         flash[:notice] = 'Consumer was successfully created.'
+!!         format.html { redirect_to(@consumer) }
+!!         format.xml  { render :xml => @consumer, :status => :created, :location => @consumer }
+!!       else
+!!         format.html { render :action => "new" }
+!!         format.xml  { render :xml => @consumer.errors, :status => :unprocessable_entity }
+!!       end
+!!     end
+!!   end
+   
+     # PUT /consumers/1
+     # PUT /consumers/1.xml
+     def update
+!!     @consumer = Consumer.find(params[:id])
+!! 
+!!     respond_to do |format|
+!!       if @consumer.update_attributes(params[:consumer])
+!!         flash[:notice] = 'Consumer was successfully updated.'
+!!         format.html { redirect_to(@consumer) }
+!!         format.xml  { head :ok }
+!!       else
+!!         format.html { render :action => "edit" }
+!!         format.xml  { render :xml => @consumer.errors, :status => :unprocessable_entity }
+!!       end
+!!     end
+!!   end
+   
+     # DELETE /consumers/1
+     # DELETE /consumers/1.xml
+     def destroy
+!!     @consumer = Consumer.find(params[:id])
+!!     @consumer.destroy
+!! 
+!!     respond_to do |format|
+!!       format.html { redirect_to(consumers_url) }
+!!       format.xml  { head :ok }
+!!     end
+!!   end
+!! end
+================================================================================
+app/controllers/units_controller.rb
+================================================================================
+   class UnitsController < ApplicationController
+     # GET /units
+     # GET /units.xml
+    # def index
+     #  @units = Unit.all#
+   
+   #    respond_to do |format|
+    #     format.html # index.html.erb
+    #     format.xml  { render :xml => @units }
+    #   end
+    # end
+   
+     # GET /units/1
+     # GET /units/1.xml
+    # def show
+    #   @unit = Unit.find(params[:id])
+   #
+   #    respond_to do |format|
+   #      format.html # show.html.erb
+   #      format.xml  { render :xml => @unit }
+   #    end
+   #  end
+   
+     # GET /units/new
+     # GET /units/new.xml
+    # def new
+    #   @unit = Unit.new
+   
+    #   respond_to do |format|
+    #     format.html # new.html.erb
+   #      format.xml  { render :xml => @unit }
+   #    end
+   #  end
+   
+     # GET /units/1/edi#t#
+    # def edit
+   #    @unit = Unit.find(params[:id])
+    # end
+   
+     # POST /units
+     # POST /units.xml
+   #  def create
+    #   @unit = Unit.new(params[:unit])
+   #
+     #  respond_to do |format|
+       #  if @unit.save
+      #     flash[:notice] = 'Unit was successfully created.'
+        #   format.html { redirect_to(@unit) }
+         #  format.xml  { render :xml => @unit, :status => :created, :location => @unit }
+   #      else
+    #       format.html { render :action => "new" }
+     #      format.xml  { render :xml => @unit.errors, :status => :unprocessable_entity }
+      #   end
+      # end
+    # end
+   
+     # PUT /units/1
+     # PUT /units/1.xml
+   =begin
+     def update
+       @unit = Unit.find(params[:id])
+       respond_to do |format|
+         if @unit.update_attributes(params[:unit]) 
+           resolv = ""
+           0.step(@unit.content.length) do |x|#buggy
+             resolv = resolv + session[:user_id].to_s + ";"
+           end
+           @unit.resolv = resolv
+           @unit.save
+           flash[:notice] = 'Unit was successfully updated.'
+           format.html { redirect_to(@unit) }
+           format.xml  { head :ok }
+         else
+           format.html { render :action => "edit" }
+           format.xml  { render :xml => @unit.errors, :status => :unprocessable_entity }
+         end
+       end
+     end
+   =end
+   
+     # DELETE /units/1
+     # DELETE /units/1.xml
+     def destroy
+!!     @unit = Unit.find(params[:id])
+!!     @unit.destroy
+!! 
+!!     respond_to do |format|
+!!       format.html { redirect_to(units_url) }
+!!       format.xml  { head :ok }
+!!     end
+!!   end
+!! end
+================================================================================
+app/models/user_mailer.rb
+================================================================================
+   class UserMailer < ActionMailer::Base
+     def signup_notification(user)
+!!     setup_email(user)
+!!     @subject    += 'Please activate your new account'
+!!     @body[:url]  = "http://#{SITE_URL}/activate/#{user.activation_code}"
+!!   
+!!   end
+     
+     def activation(user)
+!!     setup_email(user)
+!!     @subject    += 'Your account has been activated!'
+!!     @body[:url]  = "http://#{SITE_URL}/"
+!!   end
+   
+     def forgot_password(user)
+!!     setup_email(user)
+!!     @subject    += 'You have requested to change your password'
+!!     @body[:url]  = "http://#{SITE_URL}/reset_password/#{user.password_reset_code}"
+!!   end
+   
+     def reset_password(user)
+!!     setup_email(user)
+!!     @subject    += 'Your password has been reset.'
+!!   end
+         
+     protected
+     def setup_email(user)
+!!     @recipients  = "#{user.email}"
+!!     @from        = "kb@zerfall.com"
+!!     @subject     = "[Echoes] "
+!!     @sent_on     = Time.now
+!!     @body[:user] = user
+!!   end
+!! end
+================================================================================
+app/controllers/sessions_controller.rb
+================================================================================
+   # This controller handles the login/logout function of the site.  
+   class SessionsController < ApplicationController
+     # Be sure to include AuthenticationSystem in Application Controller instead
+     include AuthenticatedSystem
+   
+     # render new.rhtml
+     def new
+     end
+   
+     def create
+!!     self.current_user = User.authenticate(params[:email], params[:password])
+!!     if logged_in?
+!!       if params[:remember_me] == "1"
+!!         current_user.remember_me unless current_user.remember_token?
+!!         cookies[:auth_token] = { :value => self.current_user.remember_token , :expires => self.current_user.remember_token_expires_at }
+!!       end
+!!       redirect_back_or_default('/')
+!!       flash[:notice] = "Logged in successfully"
+!!     else
+!!       note_failed_signin
+!!       render :action => 'new'
+!!     end
+!!   end
+   
+     def destroy
+!!     self.current_user.forget_me if logged_in?
+!!     cookies.delete :auth_token
+!!     reset_session
+!!     flash[:notice] = "You have been logged out."
+!!     redirect_back_or_default('/')
+!!   end
+   
+   protected
+     # Track failed login attempts
+     def note_failed_signin
+!!     flash[:error] = "Couldn't log you in as '#{params[:email]}'"
+!!     logger.warn "Failed login for '#{params[:email]}' from #{request.remote_ip} at #{Time.now.utc}"
+!!   end
+!! end
+================================================================================
+lib/authenticated_system.rb
+================================================================================
+   module AuthenticatedSystem
+     protected
+       # Returns true or false if the user is logged in.
+       # Preloads @current_user with the user model if they're logged in.
+       def logged_in?
+!!       !!current_user
+!!     end
+   
+       # Accesses the current user from the session. 
+       # Future calls avoid the database because nil is not equal to false.
+       def current_user
+!!       @current_user ||= (login_from_session || login_from_basic_auth || login_from_cookie) unless @current_user == false
+!!     end
+   
+       # Store the given user id in the session.
+       def current_user=(new_user)
+!!       session[:user_id] = new_user ? new_user.id : nil
+!!       @current_user = new_user || false
+!!     end
+   
+       # Check if the user is authorized
+       #
+       # Override this method in your controllers if you want to restrict access
+       # to only a few actions or if you want to check if the user
+       # has the correct rights.
+       #
+       # Example:
+       #
+       #  # only allow nonbobs
+       #  def authorized?
+       #    current_user.login != "bob"
+       #  end
+       def authorized?
+!!       logged_in?
+!!     end
+   
+       # Filter method to enforce a login requirement.
+       #
+       # To require logins for all actions, use this in your controllers:
+       #
+       #   before_filter :login_required
+       #
+       # To require logins for specific actions, use this in your controllers:
+       #
+       #   before_filter :login_required, :only => [ :edit, :update ]
+       #
+       # To skip this in a subclassed controller:
+       #
+       #   skip_before_filter :login_required
+       #
+       def login_required
+!!       authorized? || access_denied
+!!     end
+   
+       # Redirect as appropriate when an access request fails.
+       #
+       # The default action is to redirect to the login screen.
+       #
+       # Override this method in your controllers if you want to have special
+       # behavior in case the user is not authorized
+       # to access the requested action.  For example, a popup window might
+       # simply close itself.
+       def access_denied
+!!       respond_to do |format|
+!!         format.html do
+!!           store_location
+!!           redirect_to new_session_path
+!!         end
+!!         format.any do
+!!           request_http_basic_authentication 'Web Password'
+!!         end
+!!       end
+!!     end
+   
+       # Store the URI of the current request in the session.
+       #
+       # We can return to this location by calling #redirect_back_or_default.
+       def store_location
+!!       session[:return_to] = request.request_uri
+!!     end
+   
+       # Redirect to the URI stored by the most recent store_location call or
+       # to the passed default.
+       def redirect_back_or_default(default)
+!!       redirect_to(session[:return_to] || default)
+!!       session[:return_to] = nil
+!!     end
+   
+       # Inclusion hook to make #current_user and #logged_in?
+       # available as ActionView helper methods.
+       def self.included(base)
+         base.send :helper_method, :current_user, :logged_in?
+       end
+   
+       # Called from #current_user.  First attempt to login by the user id stored in the session.
+       def login_from_session
+!!       self.current_user = User.find_by_id(session[:user_id]) if session[:user_id]
+!!     end
+   
+       # Called from #current_user.  Now, attempt to login by basic authentication information.
+       def login_from_basic_auth
+!!       authenticate_with_http_basic do |username, password|
+!!         self.current_user = User.authenticate(username, password)
+!!       end
+!!     end
+   
+       # Called from #current_user.  Finaly, attempt to login by an expiring token in the cookie.
+       def login_from_cookie
+!!       user = cookies[:auth_token] && User.find_by_remember_token(cookies[:auth_token])
+!!       if user && user.remember_token?
+!!         cookies[:auth_token] = { :value => user.remember_token, :expires => user.remember_token_expires_at }
+!!         self.current_user = user
+!!       end
+!!     end
+!! end
+================================================================================
+app/models/user_observer.rb
+================================================================================
+   class UserObserver < ActiveRecord::Observer
+     def after_create(user)
+!!     UserMailer.deliver_signup_notification(user)
+!!   end
+   
+   
+     def after_save(user)
+!!     UserMailer.deliver_activation(user) if user.recently_activated?
+!!     UserMailer.deliver_forgot_password(user) if user.recently_forgot_password?
+!!     UserMailer.deliver_reset_password(user) if user.recently_reset_password?
+!!   end  
+!! end
+================================================================================
+lib/authenticated_test_helper.rb
+================================================================================
+   module AuthenticatedTestHelper
+     # Sets the current user in the session from the user fixtures.
+     def login_as(user)
+!!     @request.session[:user_id] = user ? users(user).id : nil
+!!   end
+   
+     def authorize_as(user)
+!!     @request.env["HTTP_AUTHORIZATION"] = user ? ActionController::HttpAuthentication::Basic.encode_credentials(users(user).login, 'test') : nil
+!!   end
+!! end
+================================================================================
+app/models/user.rb
+================================================================================
+   require 'digest/sha1'
+   class User < ActiveRecord::Base
+     has_many :projects
+     has_many :units
+     # Virtual attribute for the unencrypted password
+     attr_accessor :password
+   
+     validates_presence_of     :login, :email
+     validates_presence_of     :password,                   :if => :password_required?
+     validates_presence_of     :password_confirmation,      :if => :password_required?
+     validates_length_of       :password, :within => 4..40, :if => :password_required?
+     validates_confirmation_of :password,                   :if => :password_required?
+     validates_length_of       :login,    :within => 3..40
+     validates_length_of       :email,    :within => 3..100
+     validates_uniqueness_of   :login, :email, :case_sensitive => false
+     before_save :encrypt_password
+     before_create :make_activation_code 
+     # prevents a user from submitting a crafted form that bypasses activation
+     # anything else you want your user to change should be added here.
+     attr_accessible :login, :email, :password, :password_confirmation
+   
+     # Activates the user in the database.
+     def activate
+!!     @activated = true
+!!     self.activated_at = Time.now.utc
+!!     self.activation_code = nil
+!!     save(false)
+!!   end
+   
+     def active?
+!!     # the existence of an activation code means they have not activated yet
+!!     activation_code.nil?
+!!   end
+   
+     # Authenticates a user by their email and unencrypted password.  Returns the user or nil.
+     def self.authenticate(email, password)
+!!     u = find :first, :conditions => ['email = ? and activated_at IS NOT NULL', email] # need to get the salt
+!!     u && u.authenticated?(password) ? u : nil
+!!   end
+   
+     # Encrypts some data with the salt.
+     def self.encrypt(password, salt)
+!!     Digest::SHA1.hexdigest("--#{salt}--#{password}--")
+!!   end
+   
+     # Encrypts the password with the user salt
+     def encrypt(password)
+!!     self.class.encrypt(password, salt)
+!!   end
+   
+     def authenticated?(password)
+!!     crypted_password == encrypt(password)
+!!   end
+   
+     def remember_token?
+!!     remember_token_expires_at && Time.now.utc < remember_token_expires_at 
+!!   end
+   
+     # These create and unset the fields required for remembering users between browser closes
+     def remember_me
+!!     remember_me_for 2.weeks
+!!   end
+   
+     def remember_me_for(time)
+!!     remember_me_until time.from_now.utc
+!!   end
+   
+     def remember_me_until(time)
+!!     self.remember_token_expires_at = time
+!!     self.remember_token            = encrypt("#{email}--#{remember_token_expires_at}")
+!!     save(false)
+!!   end
+   
+     def forget_me
+!!     self.remember_token_expires_at = nil
+!!     self.remember_token            = nil
+!!     save(false)
+!!   end
+   
+     # Returns true if the user has just been activated.
+     def recently_activated?
+!!     @activated
+!!   end
+     def forgot_password
+!!     @forgotten_password = true
+!!     self.make_password_reset_code
+!!   end
+   
+     def reset_password
+!!     # First update the password_reset_code before setting the
+!!     # reset_password flag to avoid duplicate email notifications.
+!!     update_attributes(:password_reset_code => nil)
+!!     @reset_password = true
+!!   end
+   
+     #used in user_observer
+     def recently_forgot_password?
+!!     @forgotten_password
+!!   end
+   
+     def recently_reset_password?
+!!     @reset_password
+!!   end
+   
+     def recently_activated?
+!!     @recent_active
+!!   end
+       
+     protected
+     # before filter
+     def encrypt_password
+!!     return if password.blank?
+!!     self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
+!!     self.crypted_password = encrypt(password)
+!!   end
+         
+     def password_required?
+!!     crypted_password.blank? || !password.blank?
+!!   end
+       
+     def make_activation_code
+!! 
+!!     self.activation_code = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
+!!   end
+   
+     def make_password_reset_code
+!!     self.password_reset_code = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
+!!   end
+!!   
+!! end
+================================================================================
+app/controllers/content_controller.rb
+================================================================================
+   class ContentController < ApplicationController
+     def imprint
+     end
+   
+     def terms
+     end
+   
+     def index
+     end
+   
+   end
+================================================================================
+app/helpers/consumers_helper.rb
+================================================================================
+   module ConsumersHelper
+   end
+================================================================================
+app/controllers/application_controller.rb
+================================================================================
+   # Filters added to this controller apply to all controllers in the application.
+   # Likewise, all the methods added will be available for all controllers.
+   
+   class ApplicationController < ActionController::Base
+     helper :all # include all helpers, all the time
+     protect_from_forgery # See ActionController::RequestForgeryProtection for details
+     include AuthenticatedSystem
+     include ExceptionNotifiable
+     # Scrub sensitive parameters from your log
+     # filter_parameter_logging :password
+   
+   end
+================================================================================
+app/helpers/users_helper.rb
+================================================================================
+   module UsersHelper
+   end
+================================================================================
+app/helpers/sessions_helper.rb
+================================================================================
+   module SessionsHelper
+   end
+================================================================================
+app/models/project.rb
+================================================================================
+   class Project < ActiveRecord::Base
+     has_many :units, :dependent => :destroy
+     belongs_to :user
+   
+   
+     validates_length_of :subject, :in => 3..30
+   
+     validates_length_of       :content,    :maximum => 1000
+   end
+================================================================================
+app/helpers/units_helper.rb
+================================================================================
+   module UnitsHelper
+   end
+================================================================================
+app/helpers/application_helper.rb
+================================================================================
+   # Methods added to this helper will be available to all templates in the application.
+   module ApplicationHelper
+   
+     def german_time(time)
+       time.strftime("%d.%m.%Y %H:%M")  unless time.nil?
+     end
+   
+     def user_logged_in?
+       session[:user_id]
+     end
+   end
+================================================================================
+app/models/consumer.rb
+================================================================================
+   class Consumer < ActiveRecord::Base
+   end
+================================================================================
+app/helpers/projects_helper.rb
+================================================================================
+   module ProjectsHelper
+   end
+================================================================================
+app/helpers/content_helper.rb
+================================================================================
+   module ContentHelper
+   end
